@@ -26,6 +26,7 @@ class Blob {
 	public var y = 100;
 	public var xx = 100.0;
 	public var yy = 100.0;
+	public var flipped = false;
 
 	public static function setSheet(sheet) {
 		Blob.sheet = sheet;
@@ -70,13 +71,24 @@ class Blob {
 			return;
 		}
 
+		var flipBD = new BitmapData(grid.w, grid.h);
+
+		var m:Matrix;
+		if (flipped) {
+			m = new Matrix(-1, 0, 0, 1, grid.w, 0);
+		} else {
+			m = new Matrix();
+		}
+		m.translate(x, y);
+
 		x = Math.round(xx);
 		y = Math.round(yy);
-		buffer.copyPixels(
+		flipBD.copyPixels(
 			sheet, 
 //			new Rectangle(0, 0, grid.w, grid.h),
-			new Rectangle(currentAnimation.gridX + currentFrameInAnimation * grid.w, currentAnimation.gridY * grid.h, grid.w, grid.h),
-			new Point(x, y)
+			new Rectangle((currentAnimation.gridX + currentFrameInAnimation) * grid.w, currentAnimation.gridY * grid.h, grid.w, grid.h),
+			new Point(0, 0)
 		);
+		buffer.draw(flipBD, m);
 	}
 }

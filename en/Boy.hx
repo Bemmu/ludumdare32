@@ -1,8 +1,6 @@
 package en;
 
 class Boy extends Entity {
-	var track:Int;
-	var trackHeight = 32;
 	public var lanes:Int;
 
 	public function new() {
@@ -15,10 +13,6 @@ class Boy extends Entity {
 
 	public function trackMove(amount:Int) {
 		track += amount;
-	}
-
-	function trackPos() {
-		return 100 - 16 + trackHeight * track;
 	}
 
 	override public function tick() {
