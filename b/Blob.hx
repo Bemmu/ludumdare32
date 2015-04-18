@@ -18,12 +18,14 @@ typedef AnimationDefinition = {
 class Blob {
 	static var sheet:BitmapData;
 	static var defs:Map<String, AnimationDefinition> = new Map();
-	public var currentAnimation:AnimationDefinition;
+	public var currentAnimation:AnimationDefinition = null;
 	public var ticks = 0;
 	public var currentFrameInAnimation = 0;
 	static var grid:{w:Int, h:Int} = {w:32, h:32};
 	public var x = 100;
 	public var y = 100;
+	public var xx = 100.0;
+	public var yy = 100.0;
 
 	public static function setSheet(sheet) {
 		Blob.sheet = sheet;
@@ -34,9 +36,13 @@ class Blob {
 	}
 
 	public function anim(name:String) {
-		currentAnimation = defs[name];
-		currentFrameInAnimation = 0;
-		ticks = 0;
+		if (defs.exists(name)) {
+			currentAnimation = defs[name];
+			currentFrameInAnimation = 0;
+			ticks = 0;
+		} else {
+			trace("No such animation " + name);
+		}
 	}
 
 	public static function setGrid(w:Int, h:Int) {
@@ -59,6 +65,13 @@ class Blob {
 	}
 
 	public function draw(buffer:BitmapData) {
+		if (currentAnimation == null) {
+			trace("Define some animations and call .anim() before calling .draw()");
+			return;
+		}
+
+		x = Math.round(xx);
+		y = Math.round(yy);
 		buffer.copyPixels(
 			sheet, 
 //			new Rectangle(0, 0, grid.w, grid.h),
