@@ -5,6 +5,7 @@ class Pet extends Entity {
 	public var petType:String;
 	public var attacking:Bool = false;
 	public var attackSpeed = 2;
+	public var yOff = 0;
 
 	public var attackStrength = 10;
 	public var criticalLikelihood = 0.5;
@@ -16,18 +17,18 @@ class Pet extends Entity {
 	}
 
 	public function availableForAttacking() {
-		return true;
+		return !attacking;
 	}
 
 	public function attack(track) {
+		attacking = true;
 		this.track = track;
 		anim(petType + "_run");
-		attacking = true;
 	}
 
 	public function recall() {
-		xx = 20;
 		attacking = false;
+		xx = 20;
 		anim(petType + "_idle");
 	}
 
@@ -37,7 +38,7 @@ class Pet extends Entity {
 		if (attacking) {
 			xx += attackSpeed;
 		} else {
-			yy = yy * 0.80 + master.yy * 0.20;
+			yy = yy * 0.80 + (master.yy + yOff) * 0.20;
 		}
 	}
 }

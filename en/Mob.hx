@@ -16,16 +16,6 @@ class Mob extends Entity {
 		yy = trackPos();
 	}
 
-	public function die() {
-		requestRemoval = true;
-		trace(monsterType + " died");
-	}
-
-	public function damage(d:Int) {
-		health = Std.int(Math.max(0, health - d));
-		if (health == 0) die();
-	}
-
 	override public function tick() {
 		super.tick();
 		totalTicks++;

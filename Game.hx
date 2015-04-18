@@ -42,12 +42,13 @@ class Game {
 	var boy:Boy;
 	var lanes:Int;
 
-	function adopt() {
+	function adopt(xx:Int) {
 		var pet:Pet = new Dash();
 		ents.push(pet);
-		pets.push(pet);
 		pet.master = boy;
-		pet.xx = 20;
+		pet.xx = xx;
+		pet.yOff = 4 * pets.length;
+		pets.push(pet);
 	}
 
 	function initGround() {
@@ -88,7 +89,8 @@ class Game {
 		boy = new Boy();
 		boy.lanes = lanes;
 		ents.push(boy);
-		adopt();
+		adopt(20);
+		adopt(10);
 		initGround();
 		var mob = new Mob();
 		mobs.push(mob);
@@ -124,9 +126,9 @@ class Game {
 		for (pet in pets) {
 			if (pet.petType == petType && pet.availableForAttacking()) {
 				matchingPets.push(pet);
-				break;
 			}
 		}
+		trace(matchingPets.length);
 
 		if (matchingPets.length == 0) {
 			trace("No " + petType + " available");
@@ -240,14 +242,22 @@ class Game {
 
 		// Draw in correct order for depth
 		ents.sort(function (x:Entity, y:Entity) {
-			if (x.yy == y.yy) return 0;
-			if (x.yy > y.yy) return 1;
-			return 0;
+			if (x.y == y.y) {
+				if (x.x == y.x) {
+					return 0;
+				}
+				if (x.x > y.x) return 1;
+				return -1;
+			}
+			if (x.y > y.y) return 1;
+			return -1;
 		});
 		for (ent in ents) {
 			ent.draw(buffer);
 		}
 
+		var popup = new Popup();
+		popup.draw(buffer);
 
 		var m = new Matrix();
 		m.scale(3, 3);

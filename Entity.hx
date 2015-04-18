@@ -7,6 +7,15 @@ class Entity extends Blob {
 	public var track:Int;
 	var trackHeight = 32;
 
+	public function die() {
+		requestRemoval = true;
+	}
+
+	public function damage(d:Int) {
+		health = Std.int(Math.max(0, health - d));
+		if (health == 0) die();
+	}
+
 	function trackPos() {
 		return 100 - 16 + trackHeight * track;
 	}
