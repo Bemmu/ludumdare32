@@ -65,7 +65,7 @@ class Blob {
 	public function new() {
 	}
 
-	public function draw(buffer:BitmapData) {
+	public function draw(buffer:BitmapData, ?blendMode:BlendMode) {
 		if (currentAnimation == null) {
 			trace("Define some animations and call .anim() before calling .draw()");
 			return;
@@ -89,6 +89,6 @@ class Blob {
 			new Rectangle((currentAnimation.gridX + currentFrameInAnimation) * grid.w, currentAnimation.gridY * grid.h, grid.w, grid.h),
 			new Point(0, 0)
 		);
-		buffer.draw(flipBD, m);
+		buffer.draw(flipBD, m, null, blendMode);
 	}
 }

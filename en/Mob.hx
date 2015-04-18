@@ -2,7 +2,9 @@ package en;
 
 class Mob extends Entity {
 	public var monsterType:String;
-	public var speed = 1;
+	public var speed = 0.5;
+	public var targetX:Float;
+	public var totalTicks = 0;
 
 	public function new() {
 		super();
@@ -10,12 +12,27 @@ class Mob extends Entity {
 		anim("boy_idle");
 		flipped = true;
 		xx = 300;
-
+		targetX = 300;
 		yy = trackPos();
+	}
+
+	public function die() {
+		requestRemoval = true;
+		trace(monsterType + " died");
+	}
+
+	public function damage(d:Int) {
+		health = Std.int(Math.max(0, health - d));
+		if (health == 0) die();
 	}
 
 	override public function tick() {
 		super.tick();
-		xx -= speed;
+		totalTicks++;
+
+		if ((totalTicks%80) == 0) {
+			targetX -= 20;
+		}
+		xx = targetX * 0.20 + xx * 0.80;
 	}
 }

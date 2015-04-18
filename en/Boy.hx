@@ -12,7 +12,9 @@ class Boy extends Entity {
 	}
 
 	public function trackMove(amount:Int) {
-		track += amount;
+		if (track + amount >= 0 && track + amount <= 2) {
+			track += amount;
+		}
 	}
 
 	override public function tick() {

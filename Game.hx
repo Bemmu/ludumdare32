@@ -15,7 +15,7 @@ import en.*;
 
 class Game {
 	var pt0 = new Point(0,0);
-	var lightBlur = new flash.filters.BlurFilter(40,40,2);
+	var lightBlur = new flash.filters.BlurFilter(4,4,2);
 	var prevKeys:Map<Int, Bool> = new Map();
 	var keys:Map<Int, Bool> = new Map();
 	var buffer:BitmapData = new BitmapData(300, 200, false, 0xff00ff00);
@@ -36,7 +36,7 @@ class Game {
 	var channel:SoundChannel;
 	var sheet = new Sheet(0,0);
 	var bgBD = new BgPNG(0,0);
-	var ents:Array<Entity> = new Array();
+	var ents:Array<Dynamic> = new Array();
 	var pets:Array<Pet> = new Array();
 	var mobs:Array<Mob> = new Array();
 	var boy:Boy;
@@ -95,6 +95,18 @@ class Game {
 		ents.push(mob);
 	}
 
+	function closestMobOnTrack(track) {
+		var closest:Mob = null;
+		for (mob in mobs) {
+			if (mob.track == track) {
+				if (closest == null || mob.xx < closest.xx) {
+					closest = mob;
+				}
+			}
+		}
+		return closest;
+	}
+
 	function initKeyboard() {
 		flash.Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function (e) {
 			keys[e.keyCode] = true;
@@ -128,9 +140,7 @@ class Game {
 
 			var bestPet = matchingPets[0];
 //			trace("Attacking with " + petType + " of health " + bestPet.health);
-			bestPet.attack();
-
-
+			bestPet.attack(boy.track);
 		}
 	}
 
@@ -154,10 +164,48 @@ class Game {
 		}
 	}
 
+	function fight(mob, pet) {
+		var d = pet.attackStrength;
+		if (Math.random() < pet.criticalLikelihood) {
+			d += pet.criticalAttackStrength;
+		}
+		mob.damage(d);
+		pet.recall();
+	}
+
+	function collisions() {
+		for (pet in pets) {
+			var closest = closestMobOnTrack(pet.track);
+			if (closest == null) continue;
+			if (Math.abs(closest.xx - pet.xx) < 5) {
+				fight(closest, pet);
+			}
+		}
+	}
+
+	function removeDead() {
+		var removeThese:Array<Entity> = [];
+
+		for (ent in ents) {
+			if (ent.requestRemoval) {
+				removeThese.push(ent);
+				trace(mobs.length);
+				mobs.remove(ent);
+				trace(mobs.length);
+			}
+		}
+
+		for (ent in removeThese) {
+			ents.remove(ent);
+		}
+	}
+
 	function tick() {
 		for (ent in ents) {
 			ent.tick();
 		}
+		collisions();
+		removeDead();
 	}
 
 	function lights() {
@@ -165,9 +213,9 @@ class Game {
 		lightBD.fillRect(new Rectangle(0, 0, lightBD.width, 95), 0xffc0c0c0);
 		for (ent in ents) {
 			shadow.xx = ent.xx;
-			shadow.yy = ent.yy + 5;
+			shadow.yy = ent.yy + 6;
 			shadow.tick();
-			shadow.draw(lightBD);
+			shadow.draw(lightBD, flash.display.BlendMode.HARDLIGHT);
 		}
 		lightBD.applyFilter(lightBD, lightBD.rect, pt0, lightBlur);
 		buffer.draw(lightBD, null, null, flash.display.BlendMode.HARDLIGHT);
@@ -197,8 +245,6 @@ class Game {
 			return 0;
 		});
 		for (ent in ents) {
-
-
 			ent.draw(buffer);
 		}
 
@@ -214,9 +260,9 @@ class Game {
 		Blob.defineAnimation("boy_idle", 0, 0, 1, 10);
 //		Blob.defineAnimation("dash_idle", 0, 3, 5, 10);
 //		Blob.defineAnimation("dash_run", 0, 4, 6, 3);
-		Blob.defineAnimation("dash_idle", 1, 1, 3, 10);
+		Blob.defineAnimation("dash_idle", 1, 1, 1, 10);
 		Blob.defineAnimation("dash_run", 1, 1, 3, 3);
-		Blob.defineAnimation("shadow", 0, 2, 1, 20);
+		Blob.defineAnimation("shadow", 3, 2, 1, 20);
 		restartGame();
 
 		particles = new Particles();
