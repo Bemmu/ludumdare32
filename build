@@ -1,1 +1,4 @@
+convert sheet.psd sheet.png
+mv sheet-0.png sheet.png
+rm sheet-*.png
 haxe build.hxml

@@ -6,8 +6,9 @@ class Mob extends Entity {
 	public var targetX:Float;
 	public var totalTicks = 0;
 
-	public function new() {
+	public function new(track:Int) {
 		super();
+		this.track = track;
 		monsterType = "boy";
 		anim("boy_idle");
 		flipped = true;

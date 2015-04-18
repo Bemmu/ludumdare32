@@ -28,7 +28,7 @@ class Entity extends Blob {
 		buffer.fillRect(new flash.geom.Rectangle(x + 4, y - 4, 25 + 2, 3), 0x0);
 
 		for (_x in x...x+25) {
-			buffer.setPixel(_x + 5, y - 3, _x < x+Math.floor(health/4) ? 0xff99ff99 : 0xffff3333);
+			buffer.setPixel(_x + 5, y - 3, _x < x+Math.floor(health/4) ? 0xff33ff33 : 0xffff3333);
 		} 
 	}
 

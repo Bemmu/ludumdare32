@@ -5,6 +5,7 @@ import flash.geom.*;
 import flash.utils.*;
 import flash.ui.*;
 import flash.media.*;
+import flash.text.*;
 import b.*;
 import en.*;
 
@@ -92,7 +93,10 @@ class Game {
 		adopt(20);
 		adopt(10);
 		initGround();
-		var mob = new Mob();
+	}
+
+	function spawn() {
+		var mob = new Mob(Math.floor(Math.random() * 3));
 		mobs.push(mob);
 		ents.push(mob);
 	}
@@ -270,8 +274,8 @@ class Game {
 		Blob.defineAnimation("boy_idle", 0, 0, 1, 10);
 //		Blob.defineAnimation("dash_idle", 0, 3, 5, 10);
 //		Blob.defineAnimation("dash_run", 0, 4, 6, 3);
-		Blob.defineAnimation("dash_idle", 1, 1, 1, 10);
-		Blob.defineAnimation("dash_run", 1, 1, 3, 3);
+		Blob.defineAnimation("dash_idle", 0, 5, 3, 30);
+		Blob.defineAnimation("dash_run", 1, 1, 3, 3, [null, null, null]);
 		Blob.defineAnimation("shadow", 3, 2, 1, 20);
 		restartGame();
 

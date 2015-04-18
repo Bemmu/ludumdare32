@@ -12,7 +12,8 @@ typedef AnimationDefinition = {
 	gridX : Int,
 	gridY : Int,
 	frames : Int,
-	ticksPerFrame : Int
+	ticksPerFrame : Int,
+	soundNames : Array<String>
 }
 
 class Blob {
@@ -32,8 +33,8 @@ class Blob {
 		Blob.sheet = sheet;
 	}
 
-	public static function defineAnimation(name, gridX, gridY, frames, ticksPerFrame) {
-		defs[name] = {gridX:gridX, gridY:gridY, frames:frames, ticksPerFrame:ticksPerFrame};
+	public static function defineAnimation(name, gridX, gridY, frames, ticksPerFrame, ?soundNames) {
+		defs[name] = {gridX:gridX, gridY:gridY, frames:frames, ticksPerFrame:ticksPerFrame, soundNames:soundNames};
 	}
 
 	public function anim(name:String) {

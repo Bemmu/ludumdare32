@@ -1,7 +1,7 @@
 package b;
 
 class Generators {
-	static public function generateOverlay(buffer, bgColor = 0xff808080, fgColor = 0xffffffff) {
+	static public function generateOverlay(buffer, bgColor = 0xff9090f0, fgColor = 0xffffffff) {
 		for (x in 0...buffer.width) {
 			for (y in 0...buffer.height) {
 				if ((y%3) == 2) {
