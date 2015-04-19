@@ -63,6 +63,7 @@ PRESS B TO BUY BIRD FOR $5000
 PRESS G TO BUY GORILLA FOR $10000
 PRESS Q WHEN DONE";
 
+	var started = false;
 	var levelComplete = false;
 	var didVisitStore = false;
 	var pt0 = new Point(0,0);
@@ -509,7 +510,6 @@ PRESS Q WHEN DONE";
 		if (channel != null) {
 			channel.stop();
 		}
-		channel = new FirstSong().play(0, 9999);
 		over = false;
 		level = 0;
 		lanes = 3;
@@ -539,6 +539,8 @@ PRESS Q WHEN DONE";
 	}
 
 	function nextLevel() {
+		popups = [];
+
 		smokeParticles.reset();
 		particles.reset();
 		backstory = makeRandomBackstory();
@@ -708,6 +710,7 @@ PRESS Q WHEN DONE";
 		if (!prevKeys[Keyboard.SPACE] && keys[Keyboard.SPACE]) {
 			if (over) {
 				restartGame();
+				channel = new FirstSong().play(0, 9999);
 			}
 			if (levelComplete) {
 				nextLevel();
@@ -974,6 +977,14 @@ PRESS Q WHEN DONE";
 	var backstory:String;
 
 	function refresh(e:flash.events.Event) {
+		if (!started) {
+			buffer.fillRect(buffer.rect, 0x00ffffff);
+			Popup.write(buffer, 105, 90, "CLICK TO START", 0xffffff, true);			
+			var m = new Matrix();
+			m.scale(3, 3);
+			display.draw(buffer, m, null, null);
+			return;
+		}
 
 //		buffer.applyFilter(buffer, buffer.rect, new Point(0,0), new flash.filters.GlowFilter(0xffffffff, 1.0, 10, 10, 1.5, 2, false, false));
 		controls();
@@ -1076,8 +1087,13 @@ PRESS Q WHEN DONE";
 		display.draw(overlayBD, null, null, OVERLAY);
 	}
 
+	function _start(x) {
+		started = true;
+		channel = new FirstSong().play(0, 9999);
+	}
 
 	public function new() {
+
 		particles = new Particles();
 		smokeParticles = new Particles();
 		backstory = makeRandomBackstory();
@@ -1101,6 +1117,7 @@ PRESS Q WHEN DONE";
 
 		flash.Lib.current.addChild(new Bitmap(display));
 		flash.Lib.current.stage.addEventListener(Event.ENTER_FRAME, refresh);
+		flash.Lib.current.stage.addEventListener(flash.events.MouseEvent.CLICK, _start);
 		initKeyboard();
 	}
 
