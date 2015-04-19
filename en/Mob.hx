@@ -5,13 +5,14 @@ class Mob extends Entity {
 	public var speed = 0.5;
 	public var targetX:Float;
 	public var totalTicks = 0;
+	public var moneyDrop = 100;
 
 	public function new(track:Int) {
 		super();
 		this.track = track;
 		monsterType = "boy";
-		anim("boy_idle");
-		flipped = true;
+		anim("henro_walk");
+		flipped = false;
 		xx = 300;
 		targetX = 300;
 		yy = trackPos();

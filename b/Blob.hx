@@ -28,6 +28,7 @@ class Blob {
 	public var xx = 100.0;
 	public var yy = 100.0;
 	public var flipped = false;
+	public var visible = true;
 
 	public static function setSheet(sheet) {
 		Blob.sheet = sheet;
@@ -67,6 +68,8 @@ class Blob {
 	}
 
 	public function draw(buffer:BitmapData, ?blendMode:BlendMode) {
+		if (!visible) return;
+		
 		if (currentAnimation == null) {
 			trace("Define some animations and call .anim() before calling .draw()");
 			return;
@@ -80,10 +83,10 @@ class Blob {
 		} else {
 			m = new Matrix();
 		}
-		m.translate(x, y);
-
 		x = Math.round(xx);
 		y = Math.round(yy);
+		m.translate(x, y);
+
 		flipBD.copyPixels(
 			sheet, 
 //			new Rectangle(0, 0, grid.w, grid.h),

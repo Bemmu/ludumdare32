@@ -7,6 +7,10 @@ class Entity extends Blob {
 	public var track:Int;
 	var trackHeight = 32;
 
+	public function died() {
+		return health == 0;
+	}
+
 	public function die() {
 		requestRemoval = true;
 	}
@@ -34,6 +38,6 @@ class Entity extends Blob {
 
 	override public function draw(buffer:BitmapData, ?blendMode:BlendMode) {
 		super.draw(buffer, blendMode);
-		healthBar(buffer);
+		if (visible) healthBar(buffer);
 	}
 }
