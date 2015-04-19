@@ -5,6 +5,8 @@ class Cat extends Pet {
 
 	public function new() {
 		super();
+		fightDelay = 50;
+		healingSpeed = 0.005;
 		petType = "cat";
 		anim("cat_idle");
 	}

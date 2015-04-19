@@ -33,17 +33,32 @@ class Game {
 
    ALSO, YOUR PETS ATE YOUR REMAINS.
 ";
+	var help = "play with keyboard. W S moves up and down.\nD for dog attack. don't let enemies cross line.";
+	var help2 = "Animals attack the line you are on.\nD for dog attack. C for cat attack.";
+
 	var levelCompleteText = "
 
    GOOD JOB!
 
-   PRESS SPACE FOR NEXT WAVE.
+   PRESS SPACE TO PROCEED.
 ";
+
+	var winText = "
+
+   WELL DONE!
+
+   YOU WIN THE GAME.
+   IT WASN'T EASY, BUT YOU DID IT.
+
+   PEOPLE SING SONGS ABOUT YOUR VICTORY
+   AND EAT LETTUCE WHILE THINKING ABOUT YOU!
+";
+
 	var shopText = "PRESS D TO BUY DOG FOR $100
 PRESS C TO BUY CAT FOR $1000
 PRESS B TO BUY BIRD FOR $5000
 PRESS G TO BUY GORILLA FOR $10000
-PRESS Q WHEN DONE SHOPPING";
+PRESS Q WHEN DONE";
 
 	var levelComplete = false;
 	var didVisitStore = false;
@@ -88,25 +103,294 @@ PRESS Q WHEN DONE SHOPPING";
 	var levels:Array<Dynamic> = [
 		{
 			"spawn" : function (ticks) {
-				var freq = Std.int(Math.min(ticks/10.0, 900));
+				var freq = Std.int(Math.min(ticks/1.0, 990));
 				if ((ticks%(1000 - freq)) == 10) {
 					return "henro";
 				}
 				return null;
 			},
-			"mobs" : 1,
+			"bgOffset" : 0,
+			"mobs" : 3,
 			"shop" : false,
-			"name" : "wave 1 - tokushima, japan",
-			"music" : FirstSong
+			"name" : "wave 1/3 - tokushima, japan",
+			"music" : FirstSong,
+			"grassiness" : 16,
+			"maxBladeHeight" : 10,
+			"r" : 0x9c,
+			"g" : 0xff,
+			"b" : 0x9c
 		},
 		{
 			"spawn" : function (ticks) {
 				return null;
 			},
+			"bgOffset" : 0,
 			"shop" : true,
-			"name" : "",
+			"name" : "BUY WEAPONIZED PETS HERE!",
 			"music" : null,
-			"mobs" : 0
+			"mobs" : 0,
+			"grassiness" : 16,
+			"maxBladeHeight" : 10,
+			"r" : 0x9c,
+			"g" : 0xff,
+			"b" : 0x9c
+		},
+		{
+			"spawn" : function (ticks) {
+				var freq = Std.int(Math.min(ticks/5.0, 900));
+				if ((ticks%(1000 - freq)) == 10) {
+					return "henro";
+				}
+				return null;
+			},
+			"bgOffset" : 0,
+			"mobs" : 6,
+			"shop" : false,
+			"name" : "wave 2/3 - tokushima, japan",
+			"music" : FirstSong,
+			"grassiness" : 16,
+			"maxBladeHeight" : 10,
+			"r" : 0x9c,
+			"g" : 0xff,
+			"b" : 0x9c
+		},
+		{
+			"spawn" : function (ticks) {
+				return null;
+			},
+			"bgOffset" : 0,
+			"shop" : true,
+			"name" : "ALL OF OUR PRODUCTS ARE ORGANIC",
+			"music" : null,
+			"mobs" : 0,
+			"grassiness" : 16,
+			"maxBladeHeight" : 10,
+			"r" : 0x9c,
+			"g" : 0xff,
+			"b" : 0x9c
+		},
+		{
+			"spawn" : function (ticks) {
+				var freq = Std.int(Math.min(ticks/2.0, 900));
+				if ((ticks%(1000 - freq)) == 10) {
+					return "henro";
+				}
+				return null;
+			},
+			"bgOffset" : 0,
+			"mobs" : 12,
+			"shop" : false,
+			"name" : "wave 3/3 - tokushima, japan",
+			"music" : FirstSong,
+			"grassiness" : 16,
+			"maxBladeHeight" : 10,
+			"r" : 0x9c,
+			"g" : 0xff,
+			"b" : 0x9c
+		},
+		{
+			"spawn" : function (ticks) {
+				return null;
+			},
+			"bgOffset" : 0,
+			"shop" : true,
+			"name" : "YOU LOOK GREAT TODAY!",
+			"music" : null,
+			"mobs" : 0,
+			"grassiness" : 16,
+			"maxBladeHeight" : 10,
+			"r" : 0x9c,
+			"g" : 0xff,
+			"b" : 0x9c
+		},
+		{
+			"spawn" : function (ticks) {
+				var freq = Std.int(Math.min(ticks/10.0, 900));
+				if ((ticks%(1000 - freq)) == 10) {
+					return "deer";
+				}
+				return null;
+			},
+			"bgOffset" : 600,
+			"mobs" : 4,
+			"shop" : false,
+			"name" : "wave 1/3 - nara, japan",
+			"music" : FirstSong,
+			"grassiness" : 25,
+			"maxBladeHeight" : 1,
+			"r" : 0xf4,
+			"g" : 0xa4,
+			"b" : 0x60
+		},
+		{
+			"spawn" : function (ticks) {
+				return null;
+			},
+			"bgOffset" : 600,
+			"shop" : true,
+			"name" : "DEER FACTS:\nDEER GROW NEW ANTLERS EACH YEAR",
+			"music" : null,
+			"mobs" : 0,
+			"grassiness" : 25,
+			"maxBladeHeight" : 1,
+			"r" : 0xf4,
+			"g" : 0xa4,
+			"b" : 0x60
+		},
+		{
+			"spawn" : function (ticks) {
+				var freq = Std.int(Math.min(ticks/4.0, 900));
+				if ((ticks%(1000 - freq)) == 10) {
+					return "deer";
+				}
+				return null;
+			},
+			"bgOffset" : 600,
+			"mobs" : 8,
+			"shop" : false,
+			"name" : "wave 2/3 - nara, japan",
+			"music" : FirstSong,
+			"grassiness" : 25,
+			"maxBladeHeight" : 1,
+			"r" : 0xf4,
+			"g" : 0xa4,
+			"b" : 0x60
+		},
+		{
+			"spawn" : function (ticks) {
+				return null;
+			},
+			"bgOffset" : 600,
+			"shop" : true,
+			"name" : "DEER FACTS:\nA FEMALE DEER IS CALLED A DOE",
+			"music" : null,
+			"mobs" : 0,
+			"grassiness" : 25,
+			"maxBladeHeight" : 1,
+			"r" : 0xf4,
+			"g" : 0xa4,
+			"b" : 0x60
+		},
+		{
+			"spawn" : function (ticks) {
+				var freq = Std.int(Math.min(ticks/2.0, 900));
+				if ((ticks%(1000 - freq)) == 10) {
+					return "deer";
+				}
+				return null;
+			},
+			"bgOffset" : 600,
+			"mobs" : 15,
+			"shop" : false,
+			"name" : "wave 3/3 - nara, japan",
+			"music" : FirstSong,
+			"grassiness" : 25,
+			"maxBladeHeight" : 1,
+			"r" : 0xf4,
+			"g" : 0xa4,
+			"b" : 0x60
+		},
+		{
+			"spawn" : function (ticks) {
+				return null;
+			},
+			"bgOffset" : 600,
+			"shop" : true,
+			"name" : "YOUR MOTHER IS VERY TALENTED",
+			"music" : null,
+			"mobs" : 0,
+			"grassiness" : 25,
+			"maxBladeHeight" : 1,
+			"r" : 0xf4,
+			"g" : 0xa4,
+			"b" : 0x60
+		},
+		{
+			"spawn" : function (ticks) {
+				var freq = Std.int(Math.min(ticks/7.0, 900));
+				if ((ticks%(1000 - freq)) == 10) {
+					return "salaryman";
+				}
+				return null;
+			},
+			"bgOffset" : 300,
+			"mobs" : 5,
+			"shop" : false,
+			"name" : "wave 1/3 - tokyo, japan",
+			"music" : FirstSong,
+			"grassiness" : 5,
+			"maxBladeHeight" : 0,
+			"r" : 0x9c,
+			"g" : 0x9c,
+			"b" : 0x9c
+		},
+		{
+			"spawn" : function (ticks) {
+				return null;
+			},
+			"bgOffset" : 300,
+			"shop" : true,
+			"name" : "OUR STORES ARE ALL OVER JAPAN",
+			"music" : null,
+			"mobs" : 0,
+			"grassiness" : 2,
+			"maxBladeHeight" : 0,
+			"r" : 0x9c,
+			"g" : 0x9c,
+			"b" : 0x9c
+		},
+		{
+			"spawn" : function (ticks) {
+				var freq = Std.int(Math.min(ticks/6.0, 900));
+				if ((ticks%(1000 - freq)) == 10) {
+					return "salaryman";
+				}
+				return null;
+			},
+ 			"bgOffset" : 300,
+			"mobs" : 10,
+			"shop" : false,
+			"name" : "wave 2/3 - tokyo, japan",
+			"music" : FirstSong,
+			"grassiness" : 5,
+			"maxBladeHeight" : 0,
+			"r" : 0x9c,
+			"g" : 0x9c,
+			"b" : 0x9c
+		},
+		{
+			"spawn" : function (ticks) {
+				return null;
+			},
+			"bgOffset" : 300,
+			"shop" : true,
+			"name" : "YOU HAVE COME FAR\nBUT DON'T GET COCKY YET",
+			"music" : null,
+			"mobs" : 0,
+			"grassiness" : 2,
+			"maxBladeHeight" : 0,
+			"r" : 0x9c,
+			"g" : 0x9c,
+			"b" : 0x9c
+		},
+		{
+			"spawn" : function (ticks) {
+				var freq = Std.int(Math.min(ticks/2.0, 950));
+				if ((ticks%(1000 - freq)) == 10) {
+					return "salaryman";
+				}
+				return null;
+			},
+			"bgOffset" : 300,
+			"mobs" : 25,
+			"shop" : false,
+			"name" : "final wave!!!",
+			"music" : FirstSong,
+			"grassiness" : 5,
+			"maxBladeHeight" : 0,
+			"r" : 0x9c,
+			"g" : 0x9c,
+			"b" : 0x9c
 		}
 	];
 
@@ -161,20 +445,20 @@ PRESS Q WHEN DONE SHOPPING";
 		popups.push(new Popup(x, 50 + Std.int(50 - lowest), txt));
 	}
 
-	function info(txt:String) {
-		popup(50, 50, txt);
+	function info(txt:String, ?x = 50) {
+		popup(x, 50, txt);
 	}
 
 	function initGround() {
 		shadow = new Blob();
 		shadow.anim("shadow");
 
-		var grassiness = 16;
-		var maxBladeHeight = 10;
+		var grassiness = levels[level].grassiness;
+		var maxBladeHeight = levels[level].maxBladeHeight;
 
 		var bgHeight = 95;
 
-		ground.copyPixels(bgBD, new Rectangle(0, 0, 300, bgHeight), pt0);
+		ground.copyPixels(bgBD, new Rectangle(levels[level].bgOffset, 0, 300, bgHeight), pt0);
 
 		for (y in bgHeight...300) {
 			for (x in 0...ground.width) {
@@ -183,9 +467,9 @@ PRESS Q WHEN DONE SHOPPING";
 				var bladeHeight = Math.round(Math.random() * maxBladeHeight) + 1;
 
 				for (h in 0...bladeHeight) {
-					var r = Math.floor(Math.min(255, 0x9c - dark + h*5));
-					var g = Math.floor(Math.min(255, 0xff - dark + h*5));
-					var b = Math.floor(Math.min(255, 0x9c - dark + h*5));
+					var r = Math.floor(Math.min(255, levels[level].r - dark + h*5));
+					var g = Math.floor(Math.min(255, levels[level].g - dark + h*5));
+					var b = Math.floor(Math.min(255, levels[level].b - dark + h*5));
 					var c = (0xff << 24) + (r << 16) + (g << 8) + b;
 					ground.setPixel32(x, y - h, c);
 				}
@@ -207,8 +491,9 @@ PRESS Q WHEN DONE SHOPPING";
 		boy.xx = 0;
 		boy.lanes = lanes;
 		ents.push(boy);
-		adopt("cat", 40);
+//		adopt("cat", 40);
 		adopt("dog", 30);
+		adopt("dog", 20);
 		initGround();
 		leaving = false;
 		enteringStore = false;
@@ -224,6 +509,7 @@ PRESS Q WHEN DONE SHOPPING";
 	}
 
 	function nextLevel() {
+		makeRandomBackstory();
 		didVisitStore = false;
 		levelComplete = false;
 		mobsKilledOrPassed = 0;
@@ -246,14 +532,27 @@ PRESS Q WHEN DONE SHOPPING";
 		if (levels[level].shop) {
 			enterStore();
 		}
+		initGround();
 	}
 
 	function spawn(mobType:String) {
 		var mob:Mob = null;
 		if (mobType == "henro") {
-			mob = new Mob(Math.floor(Math.random() * 3));
+			mob = new Henro(Math.floor(Math.random() * 3));
+		}
+		if (mobType == "salaryman") {
+			mob = new Salaryman(Math.floor(Math.random() * 3));
+		}
+		if (mobType == "deer") {
+			mob = new Deer(Math.floor(Math.random() * 3));
 		}
 		if (mob != null) {
+
+			var aas = ["wild", "wild", "wild", "scary", "wow", "suddenly", "presently", "oh no,", "look!"];
+			var bs = ["appeared", "appeared", "appeared", "emerged", "arrived", "is here!"];
+			var txt = aas[Math.floor(Math.random()*aas.length)] + " " + mobType + " " + bs[Math.floor(Math.random()*bs.length)];
+			info(txt, 150);
+
 			mobsSpawned++;
 			mobs.push(mob);
 			ents.push(mob);
@@ -294,18 +593,18 @@ PRESS Q WHEN DONE SHOPPING";
 		}
 
 		if (matchingPets.length == 0) {
-//			info("No " + petType + " available");
+			info("No " + petType + " available");
 		} else {
 			new GoSound().play();
 
 			matchingPets.sort(function (x, y) {
 				if (x.health == y.health) return 0;
-				if (x.health > y.health) return 1;
-				return -1;
+				if (x.health > y.health) return -1;
+				return 1;
 			});
 
 			var bestPet = matchingPets[0];
-			info(petType + " attack");
+//			info(petType + " attack");
 
 			bestPet.attack(boy.track);
 		}
@@ -321,8 +620,8 @@ PRESS Q WHEN DONE SHOPPING";
 
 	function enteringTick() {
 		if (boy.xx < 125) {
-			boy.xx = 125 * 0.025 + boy.xx * 0.975;
-//			boy.xx += 1;
+//			boy.xx = 125 * 0.025 + boy.xx * 0.975;
+			boy.xx += 1;
 		}
 		if (Math.abs(boy.xx - 125) < 2) {
 			boy.trackMove(-1);
@@ -341,11 +640,16 @@ PRESS Q WHEN DONE SHOPPING";
 	function buy(petName:String) {
 		var c = cost(petName);
 		if (money > c) {
+			if (petName == "gorilla" || petName == "bird") {
+				info(petName + " was a lie, sorry");
+				return;
+			}
+
 			adopt(petName, 10);
 			money -= c;			
 			info("Bought " + petName);
 		} else {
-			info("Not enough money");
+			info("can't afford " + petName);
 		}
 	}
 
@@ -425,9 +729,11 @@ PRESS Q WHEN DONE SHOPPING";
 		}
 	}
 
-	function fight(mob, pet) {
+	function fight(mob:Mob, pet:Pet) {
 		if (over) return;
 		if (pet.fightingCounter > 0) return;
+
+		pet.enemy = mob;
 		pet.fightingCounter = pet.fightDelay;
 		mob.fightCounter = pet.fightDelay;
 
@@ -445,6 +751,14 @@ PRESS Q WHEN DONE SHOPPING";
 		new HurtSound().play();
 		mob.damage(d);
 		if (mob.died()) {
+
+			// Stop fighting dead enemy
+			for (p in pets) {
+				if (p.enemy == mob) {
+					pet.fightingCounter = 0;
+				}
+			}
+
 			mobsKilledOrPassed++;
 			checkLevelComplete();
 			new MobDeadSound().play();
@@ -453,8 +767,11 @@ PRESS Q WHEN DONE SHOPPING";
 				if (pet.petType == "dog") {
 					txt = "WOOFALITY";
 				} 
+				if (pet.petType == "cat") {
+					txt = "CATALITY!";
+				} 
 			} else {
-				txt = "SLAUGHTER";
+				txt = mob.monsterType + " died";
 			}
 		}
 
@@ -589,6 +906,8 @@ PRESS Q WHEN DONE SHOPPING";
 		Popup.write(buffer, 100, 0, levels[level].name, 0xffffff, true);
 	}
 
+	var backstory:String;
+
 	function refresh(e:flash.events.Event) {
 
 //		buffer.applyFilter(buffer, buffer.rect, new Point(0,0), new flash.filters.GlowFilter(0xffffffff, 1.0, 10, 10, 1.5, 2, false, false));
@@ -654,10 +973,24 @@ PRESS Q WHEN DONE SHOPPING";
 			Popup.write(buffer, 0, 0, gameOverText, 0x0, false);			
 		}
 		if (levelComplete) {
-			Popup.write(buffer, 0, 0, levelCompleteText, 0x0, false);			
+			if (level == levels.length-1) {
+				Popup.write(buffer, 0, 0, winText, 0x0, false);			
+			} else {
+				Popup.write(buffer, 0, 0, levelCompleteText, 0x0, false);			
+			}
 		}
 		if (enteredStore) {
 			Popup.write(buffer, 20, 140, shopText, 0xffffff, true);			
+		}
+
+		if (level == 0) {
+			Popup.write(buffer, 0, 180, help, 0xffffff, false);			
+		}
+		if (level == 2) {
+			Popup.write(buffer, 0, 180, help2, 0xffffff, false);			
+		}
+		if ((level % 2) == 0 && level > 2) {
+			Popup.write(buffer, 0, 180, backstory, 0xffffff, false);			
 		}
 
 		var m = new Matrix();
@@ -666,7 +999,10 @@ PRESS Q WHEN DONE SHOPPING";
 		display.draw(overlayBD, null, null, OVERLAY);
 	}
 
+
 	public function new() {
+		backstory = makeRandomBackstory();
+
 		Blob.setSheet(sheet);
 		Blob.defineAnimation("boy_idle", 0, 0, 1, 10);
 		Blob.defineAnimation("cat_idle", 0, 5, 3, 30);
@@ -674,7 +1010,9 @@ PRESS Q WHEN DONE SHOPPING";
 		Blob.defineAnimation("dog_idle", 0, 3, 5, 15);
 		Blob.defineAnimation("dog_run", 0, 4, 3, 3);
 		Blob.defineAnimation("shadow", 3, 2, 1, 20);
-		Blob.defineAnimation("henro_walk", 4, 1, 1, 10);
+		Blob.defineAnimation("henro_walk", 4, 1, 3, 10);
+		Blob.defineAnimation("salaryman_walk", 4, 2, 3, 10);
+		Blob.defineAnimation("deer_walk", 4, 5, 5, 5);
 		restartGame();
 
 		particles = new Particles();
@@ -685,6 +1023,68 @@ PRESS Q WHEN DONE SHOPPING";
 		flash.Lib.current.addChild(new Bitmap(display));
 		flash.Lib.current.stage.addEventListener(Event.ENTER_FRAME, refresh);
 		initKeyboard();
+	}
+
+	function makeRandomBackstory() {
+		var aas = [
+			"Your father",
+			"Your mother",
+			"Your sister",
+			"Your half cousin",
+			"Your therapist",
+			"Your doctor",
+			"Your teacher",
+			"Everyone",
+			"The emperor",
+			"Imperial army",
+			"Your twin",
+			"Your ass",
+			"You"
+		];
+
+		var bs = [
+			"got sick",
+			"ate poison",
+			"fell",
+			"went crazy",
+			"ate bacon",
+			"drowned",
+			"ate lettuce",
+			"exploded",
+			"got pregnant",
+			"twerked",
+			"is kawaii",
+			"likes anime"
+		];
+
+		var cs = [
+			"a bit",
+			"yesterday",
+			"last year",
+			"in a dream",
+			"suddenly",
+			"aggressively",
+			"needlessly",
+			"yelling banzai",
+			"intoxicated",
+			"(really)"
+		];
+
+		// And you must go to tokyo
+
+		var ds = [
+			"to help them",
+			"to save them",
+			"to assist them",
+			"to put a stop to it",
+			"to take a photo",
+			"to laugh",
+			"to eat sushi",
+			"to relax",
+			"to party hard"
+		];
+
+		return "Backstory: Travel to Tokyo because " + aas[Math.floor(Math.random()*aas.length)] + "\n" + bs[Math.floor(Math.random()*bs.length)] + " " + cs[Math.floor(Math.random()*cs.length)] + " so you need " + ds[Math.floor(Math.random()*ds.length)] + '.';
 	}
 
 	static function main() {

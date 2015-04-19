@@ -15,7 +15,7 @@ class Popup {
 	var xx:Float;
 	public var yy:Float; 
 	var ys:Float = -1.0;
-	public var lifetime:Int = 100;
+	public var lifetime:Int = 150;
 
 	public function new(?xx:Int, ?yy:Int, ?txt:String) {
 		this.xx = xx;

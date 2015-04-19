@@ -10,6 +10,8 @@ class Mob extends Entity {
 	public var leaving = false;
 	public var damagedBoy = false;
 	public var attackStrength = 20;
+	public var jumpFreq = 80;
+	public var jumpSize = 20;
 
 	public function new(track:Int) {
 		super();
@@ -42,8 +44,8 @@ class Mob extends Entity {
 
 		totalTicks++;
 
-		if ((totalTicks%80) == 0) {
-			targetX -= 20;
+		if ((totalTicks%jumpFreq) == 0) {
+			targetX -= jumpSize;
 		}
 		xx = targetX * 0.20 + xx * 0.80;
 	}

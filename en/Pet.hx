@@ -1,4 +1,5 @@
 package en;
+import en.Mob;
 
 class Pet extends Entity {
 	public var master:Entity = null;
@@ -15,6 +16,7 @@ class Pet extends Entity {
 	public var criticalAttackStrength = 30;
 	public var attackDelay = 30;
 	public var healingSpeed = 0.01;
+	public var enemy:Mob = null;
 
 	public function new() {
 		super();
@@ -54,6 +56,7 @@ class Pet extends Entity {
 
 		if (attacking) {
 			xx += attackSpeed;
+			yy = yy * 0.80 + trackPos() * 0.20;
 		} else {
 			yy = yy * 0.80 + (master.yy + yOff) * 0.20;
 		}
