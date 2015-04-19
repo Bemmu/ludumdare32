@@ -1,3 +1,2 @@
-#Ludum Dare lib
-Just some more code I intend to use for LD32.
-
+#Pet war
+Ludum Dare 32 entry, a game about using pets as weapons.
