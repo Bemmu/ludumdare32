@@ -9,6 +9,12 @@ import flash.text.*;
 import b.*;
 import en.*;
 
+@:sound("dog_dead.mp3") class DogDeadSound extends flash.media.Sound {}
+@:sound("mob_dead.mp3") class MobDeadSound extends flash.media.Sound {}
+@:sound("hurt.mp3") class HurtSound extends flash.media.Sound {}
+@:sound("go.mp3") class GoSound extends flash.media.Sound {}
+@:sound("gameover.mp3") class GameOverSound extends flash.media.Sound {}
+@:sound("song1.mp3") class FirstSong extends flash.media.Sound {}
 @:bitmap("sheet.png") class Sheet extends flash.display.BitmapData {}
 @:bitmap("store.png") class StorePNG extends flash.display.BitmapData {}
 @:bitmap("store2.png") class Store2PNG extends flash.display.BitmapData {}
@@ -17,6 +23,30 @@ import en.*;
 @:bitmap("bg.png") class BgPNG extends flash.display.BitmapData {}
 
 class Game {
+	var gameOverText = "
+
+   GOOD TRY! BUT...
+   TOO MANY ENEMIES GOT THROUGH.
+
+   PRESS SPACE TO TRY AGAIN.
+
+
+   ALSO, YOUR PETS ATE YOUR REMAINS.
+";
+	var levelCompleteText = "
+
+   GOOD JOB!
+
+   PRESS SPACE FOR NEXT WAVE.
+";
+	var shopText = "PRESS D TO BUY DOG FOR $100
+PRESS C TO BUY CAT FOR $1000
+PRESS B TO BUY BIRD FOR $5000
+PRESS G TO BUY GORILLA FOR $10000
+PRESS Q WHEN DONE SHOPPING";
+
+	var levelComplete = false;
+	var didVisitStore = false;
 	var pt0 = new Point(0,0);
 	var lightBlur = new flash.filters.BlurFilter(4,4,2);
 	var prevKeys:Map<Int, Bool> = new Map();
@@ -52,22 +82,51 @@ class Game {
 	var mobs:Array<Mob> = new Array();
 	var boy:Boy;
 	var lanes:Int;
+	var mobsSpawned = 0;
+	var mobsKilledOrPassed = 0;
 
 	var levels:Array<Dynamic> = [
 		{
 			"spawn" : function (ticks) {
 				var freq = Std.int(Math.min(ticks/10.0, 900));
-//				trace(ticks%(1000 - freq));
 				if ((ticks%(1000 - freq)) == 10) {
 					return "henro";
 				}
 				return null;
-			}
+			},
+			"mobs" : 1,
+			"shop" : false,
+			"name" : "wave 1 - tokushima, japan",
+			"music" : FirstSong
 		},
 		{
-			"shop" : "yes"
+			"spawn" : function (ticks) {
+				return null;
+			},
+			"shop" : true,
+			"name" : "",
+			"music" : null,
+			"mobs" : 0
 		}
 	];
+
+	function leave() {
+		if (leaving) return;
+		fadeTarget = 260;
+		info("leaving");
+		leaving = true;
+		for (pet in pets) {
+			pet.attack(boy.track);
+		}
+	}
+
+	var over = false;
+	function gameOver() {
+		if (over) return;
+//		new GameOverSound().play();
+		over = true;
+		fadeTarget = 400;
+	}
 
 	function cost(petName) {
 		if (petName == "cat") return Cat.cost;
@@ -99,8 +158,6 @@ class Game {
 				lowest = popup.yy;
 			}
 		}
-//		trace(lowest);
-
 		popups.push(new Popup(x, 50 + Std.int(50 - lowest), txt));
 	}
 
@@ -139,6 +196,8 @@ class Game {
 	}
 
 	function restartGame() {
+//		channel = new FirstSong().play(0, 9999);
+		over = false;
 		level = 0;
 		lanes = 3;
 		ents = [];
@@ -158,17 +217,35 @@ class Game {
 		money = 0.0;
 		fade = 0.0;
 		fadeTarget = 0.0;
+		mobsSpawned = 0;
+		mobsKilledOrPassed = 0;
+		levelComplete = false;
+		didVisitStore = false;
 	}
 
 	function nextLevel() {
+		didVisitStore = false;
+		levelComplete = false;
+		mobsKilledOrPassed = 0;
+		mobsSpawned = 0;
+		level++;
+		for (mob in mobs) {
+			ents.remove(mob);
+		}
+		mobs = [];
 		ticks = 0;
 		fadeTarget = 0;
 		fade = 255;
 		leaving = false;
 		for (pet in pets) {
+			pet.health = 100;
 			pet.recall();
 		}
 		boy.xx = 0;
+
+		if (levels[level].shop) {
+			enterStore();
+		}
 	}
 
 	function spawn(mobType:String) {
@@ -177,17 +254,17 @@ class Game {
 			mob = new Mob(Math.floor(Math.random() * 3));
 		}
 		if (mob != null) {
+			mobsSpawned++;
 			mobs.push(mob);
 			ents.push(mob);
 		} else {
-			trace("tried to spawn null mob");
 		}
 	}
 
 	function closestMobOnTrack(track) {
 		var closest:Mob = null;
 		for (mob in mobs) {
-			if (mob.track == track) {
+			if (mob.track == track && !mob.leaving && mob.xx > 75) {
 				if (closest == null || mob.xx < closest.xx) {
 					closest = mob;
 				}
@@ -215,11 +292,11 @@ class Game {
 				matchingPets.push(pet);
 			}
 		}
-//		trace(matchingPets.length);
 
 		if (matchingPets.length == 0) {
-			info("No " + petType + " available");
+//			info("No " + petType + " available");
 		} else {
+			new GoSound().play();
 
 			matchingPets.sort(function (x, y) {
 				if (x.health == y.health) return 0;
@@ -230,7 +307,6 @@ class Game {
 			var bestPet = matchingPets[0];
 			info(petType + " attack");
 
-//			trace("Attacking with " + petType + " of health " + bestPet.health);
 			bestPet.attack(boy.track);
 		}
 	}
@@ -245,7 +321,7 @@ class Game {
 
 	function enteringTick() {
 		if (boy.xx < 125) {
-			boy.xx = 125 * 0.1 + boy.xx * 0.9;
+			boy.xx = 125 * 0.025 + boy.xx * 0.975;
 //			boy.xx += 1;
 		}
 		if (Math.abs(boy.xx - 125) < 2) {
@@ -274,12 +350,21 @@ class Game {
 	}
 
 	function controls() {
+		if (!prevKeys[Keyboard.SPACE] && keys[Keyboard.SPACE]) {
+			if (over) {
+				restartGame();
+			}
+			if (levelComplete) {
+				nextLevel();
+			}
+ 		}
+
 		if (!prevKeys[Keyboard.UP] && !prevKeys[Keyboard.W] && (keys[Keyboard.UP]||keys[Keyboard.W]) ) {
-			if (enteredStore) return;
+			if (levels[level].shop) return;
 			boy.trackMove(-1);
 		}
 		if (!prevKeys[Keyboard.DOWN] && !prevKeys[Keyboard.S] && (keys[Keyboard.DOWN]||keys[Keyboard.S]) ) {
-			if (enteredStore) return;
+			if (levels[level].shop) return;
 			boy.trackMove(1);
 		}
 
@@ -288,6 +373,7 @@ class Game {
 			info("come again soon");
 			enteredStore = false;
 			boy.visible = true;
+			didVisitStore = true;
 		}
 
 		if (!prevKeys[Keyboard.C] && keys[Keyboard.C]) {
@@ -319,17 +405,11 @@ class Game {
 			}
 		}
 
-		if (!prevKeys[Keyboard.NUMBER_0] && keys[Keyboard.NUMBER_0]) {
+/*		if (!prevKeys[Keyboard.NUMBER_0] && keys[Keyboard.NUMBER_0]) {
 			restartGame();
 		}
 		if (!prevKeys[Keyboard.NUMBER_1] && keys[Keyboard.NUMBER_1]) {
-			if (leaving) return;
-			fadeTarget = 260;
-			info("leaving");
-			leaving = true;
-			for (pet in pets) {
-				pet.attack(boy.track);
-			}
+			leave();
 		}
 		if (!prevKeys[Keyboard.R] && keys[Keyboard.R]) {
 			if (enteredStore) return;
@@ -339,15 +419,17 @@ class Game {
 			if (enteredStore) return;
 			enterStore();
 		}
-
+*/
 		for (key in keys.keys()) {
 			prevKeys[key] = keys[key];
 		}
 	}
 
 	function fight(mob, pet) {
-		if (pet.fighting) return;
-		pet.fighting = true;
+		if (over) return;
+		if (pet.fightingCounter > 0) return;
+		pet.fightingCounter = pet.fightDelay;
+		mob.fightCounter = pet.fightDelay;
 
 		popup(mob.x, mob.y, "FIGHT");
 		var txt = "FIGHT";
@@ -359,8 +441,14 @@ class Game {
 		} else {
 			txt = "-" + d + " DAMAGE";
 		}
+
+		new HurtSound().play();
 		mob.damage(d);
 		if (mob.died()) {
+			mobsKilledOrPassed++;
+			checkLevelComplete();
+			new MobDeadSound().play();
+			money += mob.moneyDrop * 0.5 + Math.random() * mob.moneyDrop;
 			if (Math.random() < 0.5) {
 				if (pet.petType == "dog") {
 					txt = "WOOFALITY";
@@ -370,8 +458,14 @@ class Game {
 			}
 		}
 
+		pet.damage(Std.int(mob.attackStrength * 0.5 + mob.attackStrength * Math.random()));
+		if (pet.died()) {
+			info(pet.petType + (Math.random() < 0.5 ? " is gone!" : " died!"));
+			new DogDeadSound().play();
+		}
+
 		popup(mob.x, mob.y, txt);
-		pet.recall();
+//		pet.recall();
 	}
 
 	function collisions() {
@@ -403,11 +497,37 @@ class Game {
 		}
 	}
 
+	function checkLevelComplete() {
+		if (mobsKilledOrPassed >= mobsSpawned && levels[level].mobs <= mobsSpawned) {
+			fadeTarget = 300;
+			levelComplete = true;
+		}
+	}
+
+	function boyDamage() {
+		for (mob in mobs) {
+			if (mob.x < 75 && !mob.damagedBoy) {
+				boy.damage(34);
+				mobsKilledOrPassed++;
+				if (!boy.died()) {
+					checkLevelComplete();
+				}
+				mob.damagedBoy = true;
+			}
+		}
+		if (boy.died()) {
+			new MobDeadSound().play();
+			gameOver();
+		}
+	}
+
 	var ticks = 0;
 	function tick() {
+		if (!over) boyDamage();
+
 		ticks++;
 		var spawnThis = levels[level].spawn(ticks);
-		if (spawnThis != null) {
+		if (spawnThis != null && levels[level].mobs > mobsSpawned) {
 			spawn(spawnThis);
 		}
 
@@ -416,11 +536,12 @@ class Game {
 		}
 		collisions();
 		removeDead();
+
 		if (enteringStore) {
 			enteringTick();
 		} else {
 			if (leaving) {
-				boy.xx = 350 * 0.03 + boy.xx * 0.97;
+				boy.xx = 350 * 0.025 + boy.xx * 0.975;
 				return;
 			}
 			if (!enteredStore) {
@@ -428,9 +549,11 @@ class Game {
 					boy.flipped = true;
 				} else {
 					boy.flipped = false;
+					if (didVisitStore) {
+						leave();
+					}
 				}
 				boy.xx = boy.xx * 0.96;
-
 			}
 		}
 	}
@@ -451,6 +574,7 @@ class Game {
 	function drawShop(buffer:BitmapData) {
 		if (enteredStore) {
 			buffer.draw(store2BD);
+
 		} else {
 			buffer.draw(storeBD);
 		}
@@ -462,6 +586,7 @@ class Game {
 		if (Math.abs(displayMoney - money) < 2) {
 			displayMoney = money;
 		}
+		Popup.write(buffer, 100, 0, levels[level].name, 0xffffff, true);
 	}
 
 	function refresh(e:flash.events.Event) {
@@ -473,7 +598,6 @@ class Game {
 		frames++;
 		if (Date.now().getTime() - fpsCountStart > 1000) {
 			if (fpsCountStart > 0) {
-//				trace(frames + " fps");
 			}
 			frames = 0;
 			fpsCountStart = Date.now().getTime();
@@ -481,7 +605,9 @@ class Game {
 
 		buffer.draw(ground);
 		lights();
-		drawShop(buffer);
+		if (levels[level].shop) {
+			drawShop(buffer);
+		}
 
 		// Draw in correct order for depth
 		ents.sort(function (x:Entity, y:Entity) {
@@ -498,6 +624,7 @@ class Game {
 		for (ent in ents) {
 			ent.draw(buffer);
 		}
+
 
 		for (popup in popups) {
 			popup.tick();
@@ -519,11 +646,24 @@ class Game {
 			nextLevel();
 		}
 
+		if (!levels[level].shop) {
+			buffer.fillRect(new Rectangle(75, 96, 1, 200), 0x00ffffff);
+		}
+
+		if (over) {
+			Popup.write(buffer, 0, 0, gameOverText, 0x0, false);			
+		}
+		if (levelComplete) {
+			Popup.write(buffer, 0, 0, levelCompleteText, 0x0, false);			
+		}
+		if (enteredStore) {
+			Popup.write(buffer, 20, 140, shopText, 0xffffff, true);			
+		}
+
 		var m = new Matrix();
 		m.scale(3, 3);
 		display.draw(buffer, m, null, null);
 		display.draw(overlayBD, null, null, OVERLAY);
-
 	}
 
 	public function new() {

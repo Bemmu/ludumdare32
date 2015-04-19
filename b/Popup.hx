@@ -80,7 +80,7 @@ class Popup {
 
 		if (bg) {
 			buffer.fillRect(new Rectangle(
-				tf.x + 1, tf.y + 3, rect.width + 2, rect.height + 2
+				x + 1, y + 3, rect.width + 2, rect.height + 2
 			), 0xff3a2542);
 		}
 		buffer.draw(tf, m);

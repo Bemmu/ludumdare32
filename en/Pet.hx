@@ -3,17 +3,18 @@ package en;
 class Pet extends Entity {
 	public var master:Entity = null;
 	public var petType:String;
-	public var attackingCounter:Int = 0;
 	public var attacking = false;
 	public var attackSpeed = 2;
 	public var yOff = 0;
 	public var homeX = 0;
-	public var fighting = false;
+	public var fightingCounter = 0;
+	public var fightDelay = 100;
 	static public var cost = 100;
 	public var attackStrength = 10;
 	public var criticalLikelihood = 0.5;
 	public var criticalAttackStrength = 30;
 	public var attackDelay = 30;
+	public var healingSpeed = 0.01;
 
 	public function new() {
 		super();
@@ -21,7 +22,7 @@ class Pet extends Entity {
 	}
 
 	public function availableForAttacking() {
-		return attackingCounter == 0;
+		return !attacking && fightingCounter == 0;
 	}
 
 	public function attack(track) {
@@ -38,6 +39,18 @@ class Pet extends Entity {
 
 	override public function tick() {
 		super.tick();
+
+		if (!attacking && health < 100 && Math.random() < healingSpeed) {
+			health++;
+		}
+
+		if (fightingCounter > 0) {
+			if (fightingCounter == 1) {
+				recall();
+			}
+			fightingCounter--;
+			return;
+		}
 
 		if (attacking) {
 			xx += attackSpeed;

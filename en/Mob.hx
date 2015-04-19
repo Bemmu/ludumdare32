@@ -6,6 +6,10 @@ class Mob extends Entity {
 	public var targetX:Float;
 	public var totalTicks = 0;
 	public var moneyDrop = 100;
+	public var fightCounter = 0;
+	public var leaving = false;
+	public var damagedBoy = false;
+	public var attackStrength = 20;
 
 	public function new(track:Int) {
 		super();
@@ -20,6 +24,22 @@ class Mob extends Entity {
 
 	override public function tick() {
 		super.tick();
+
+		// Passed line
+		if (xx < 75) {
+//			targetX = -32;
+			xx -= 4;
+			if (xx < -32) {
+				requestRemoval = true;
+			}
+			return;
+		}
+
+		if (fightCounter > 0) {
+			fightCounter--;
+			return;
+		}
+
 		totalTicks++;
 
 		if ((totalTicks%80) == 0) {
