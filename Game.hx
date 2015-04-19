@@ -1088,6 +1088,7 @@ PRESS Q WHEN DONE";
 	}
 
 	function _start(x) {
+		if (started) return;
 		started = true;
 		channel = new FirstSong().play(0, 9999);
 	}
