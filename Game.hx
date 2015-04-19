@@ -12,15 +12,19 @@ import en.*;
 @:sound("dog_dead.mp3") class DogDeadSound extends flash.media.Sound {}
 @:sound("mob_dead.mp3") class MobDeadSound extends flash.media.Sound {}
 @:sound("hurt.mp3") class HurtSound extends flash.media.Sound {}
+@:sound("blip.mp3") class BlipSound extends flash.media.Sound {}
 @:sound("go.mp3") class GoSound extends flash.media.Sound {}
 @:sound("gameover.mp3") class GameOverSound extends flash.media.Sound {}
 @:sound("song1.mp3") class FirstSong extends flash.media.Sound {}
+@:sound("song1.mp3") class SecondSong extends flash.media.Sound {}
+@:sound("song1.mp3") class ThirdSong extends flash.media.Sound {}
+@:sound("shop.mp3") class ShopSong extends flash.media.Sound {}
 @:bitmap("sheet.png") class Sheet extends flash.display.BitmapData {}
 @:bitmap("store.png") class StorePNG extends flash.display.BitmapData {}
 @:bitmap("store2.png") class Store2PNG extends flash.display.BitmapData {}
 @:bitmap("logo.png") class Logo extends flash.display.BitmapData {}
-@:bitmap("particle.png") class ParticlePNG extends flash.display.BitmapData {}
 @:bitmap("bg.png") class BgPNG extends flash.display.BitmapData {}
+@:bitmap("smoke.png") class SmokePNG extends flash.display.BitmapData {}
 
 class Game {
 	var gameOverText = "
@@ -31,7 +35,6 @@ class Game {
    PRESS SPACE TO TRY AGAIN.
 
 
-   ALSO, YOUR PETS ATE YOUR REMAINS.
 ";
 	var help = "play with keyboard. W S moves up and down.\nD for dog attack. don't let enemies cross line.";
 	var help2 = "Animals attack the line you are on.\nD for dog attack. C for cat attack.";
@@ -68,6 +71,7 @@ PRESS Q WHEN DONE";
 	var keys:Map<Int, Bool> = new Map();
 	var buffer:BitmapData = new BitmapData(300, 200, false, 0xff00ff00);
 	var particleBD:BitmapData = new BitmapData(300, 200, true, 0x00000000);
+	var smokeParticleBD:BitmapData = new BitmapData(300, 200, true, 0x00000000);
 	var ground:BitmapData = new BitmapData(300, 200, true, 0x00000000);
 	var display:BitmapData = new BitmapData(900, 600, false, 0xff00ff00);
 	var overlayBD:BitmapData = new BitmapData(900, 600, false, 0xff00ff00);
@@ -82,10 +86,11 @@ PRESS Q WHEN DONE";
 	var blob:Blob = null;
 	var dx = 1;
 	var particles:Particles = null;
+	var smokeParticles:Particles = null;
 	var fade:Float;
 	var fadeBD:BitmapData = new BitmapData(300, 200, true, 0xff000000);
 	var fadeTarget:Float;
-	var channel:SoundChannel;
+	var channel:SoundChannel = null;
 	var displayMoney:Float;
 	var money:Float;
 	var sheet = new Sheet(0,0);
@@ -113,12 +118,13 @@ PRESS Q WHEN DONE";
 			"mobs" : 3,
 			"shop" : false,
 			"name" : "wave 1/3 - tokushima, japan",
-			"music" : FirstSong,
+			"music" : "first",
 			"grassiness" : 16,
 			"maxBladeHeight" : 10,
 			"r" : 0x9c,
 			"g" : 0xff,
-			"b" : 0x9c
+			"b" : 0x9c,
+			"mobName" : "henro"
 		},
 		{
 			"spawn" : function (ticks) {
@@ -127,7 +133,7 @@ PRESS Q WHEN DONE";
 			"bgOffset" : 0,
 			"shop" : true,
 			"name" : "BUY WEAPONIZED PETS HERE!",
-			"music" : null,
+			"music" : "shop",
 			"mobs" : 0,
 			"grassiness" : 16,
 			"maxBladeHeight" : 10,
@@ -147,12 +153,13 @@ PRESS Q WHEN DONE";
 			"mobs" : 6,
 			"shop" : false,
 			"name" : "wave 2/3 - tokushima, japan",
-			"music" : FirstSong,
+			"music" : "first",
 			"grassiness" : 16,
 			"maxBladeHeight" : 10,
 			"r" : 0x9c,
 			"g" : 0xff,
-			"b" : 0x9c
+			"b" : 0x9c,
+			"mobName" : "henro"
 		},
 		{
 			"spawn" : function (ticks) {
@@ -161,7 +168,7 @@ PRESS Q WHEN DONE";
 			"bgOffset" : 0,
 			"shop" : true,
 			"name" : "ALL OF OUR PRODUCTS ARE ORGANIC",
-			"music" : null,
+			"music" : "shop",
 			"mobs" : 0,
 			"grassiness" : 16,
 			"maxBladeHeight" : 10,
@@ -181,12 +188,13 @@ PRESS Q WHEN DONE";
 			"mobs" : 12,
 			"shop" : false,
 			"name" : "wave 3/3 - tokushima, japan",
-			"music" : FirstSong,
+			"music" : "first",
 			"grassiness" : 16,
 			"maxBladeHeight" : 10,
 			"r" : 0x9c,
 			"g" : 0xff,
-			"b" : 0x9c
+			"b" : 0x9c,
+			"mobName" : "henro"
 		},
 		{
 			"spawn" : function (ticks) {
@@ -195,7 +203,7 @@ PRESS Q WHEN DONE";
 			"bgOffset" : 0,
 			"shop" : true,
 			"name" : "YOU LOOK GREAT TODAY!",
-			"music" : null,
+			"music" : "shop",
 			"mobs" : 0,
 			"grassiness" : 16,
 			"maxBladeHeight" : 10,
@@ -215,12 +223,13 @@ PRESS Q WHEN DONE";
 			"mobs" : 4,
 			"shop" : false,
 			"name" : "wave 1/3 - nara, japan",
-			"music" : FirstSong,
+			"music" : "second",
 			"grassiness" : 25,
 			"maxBladeHeight" : 1,
 			"r" : 0xf4,
 			"g" : 0xa4,
-			"b" : 0x60
+			"b" : 0x60,
+			"mobName" : "deer"
 		},
 		{
 			"spawn" : function (ticks) {
@@ -229,7 +238,7 @@ PRESS Q WHEN DONE";
 			"bgOffset" : 600,
 			"shop" : true,
 			"name" : "DEER FACTS:\nDEER GROW NEW ANTLERS EACH YEAR",
-			"music" : null,
+			"music" : "shop",
 			"mobs" : 0,
 			"grassiness" : 25,
 			"maxBladeHeight" : 1,
@@ -249,12 +258,13 @@ PRESS Q WHEN DONE";
 			"mobs" : 8,
 			"shop" : false,
 			"name" : "wave 2/3 - nara, japan",
-			"music" : FirstSong,
+			"music" : "second",
 			"grassiness" : 25,
 			"maxBladeHeight" : 1,
 			"r" : 0xf4,
 			"g" : 0xa4,
-			"b" : 0x60
+			"b" : 0x60,
+			"mobName" : "deer"
 		},
 		{
 			"spawn" : function (ticks) {
@@ -263,7 +273,7 @@ PRESS Q WHEN DONE";
 			"bgOffset" : 600,
 			"shop" : true,
 			"name" : "DEER FACTS:\nA FEMALE DEER IS CALLED A DOE",
-			"music" : null,
+			"music" : "shop",
 			"mobs" : 0,
 			"grassiness" : 25,
 			"maxBladeHeight" : 1,
@@ -275,7 +285,11 @@ PRESS Q WHEN DONE";
 			"spawn" : function (ticks) {
 				var freq = Std.int(Math.min(ticks/2.0, 900));
 				if ((ticks%(1000 - freq)) == 10) {
-					return "deer";
+					if (Math.random() < 0.5) {
+						return "deer";
+					} else {
+						return "henro";
+					}
 				}
 				return null;
 			},
@@ -283,12 +297,13 @@ PRESS Q WHEN DONE";
 			"mobs" : 15,
 			"shop" : false,
 			"name" : "wave 3/3 - nara, japan",
-			"music" : FirstSong,
+			"music" : "first",
 			"grassiness" : 25,
 			"maxBladeHeight" : 1,
 			"r" : 0xf4,
 			"g" : 0xa4,
-			"b" : 0x60
+			"b" : 0x60,
+			"mobName" : "deer"
 		},
 		{
 			"spawn" : function (ticks) {
@@ -297,7 +312,7 @@ PRESS Q WHEN DONE";
 			"bgOffset" : 600,
 			"shop" : true,
 			"name" : "YOUR MOTHER IS VERY TALENTED",
-			"music" : null,
+			"music" : "shop",
 			"mobs" : 0,
 			"grassiness" : 25,
 			"maxBladeHeight" : 1,
@@ -317,12 +332,13 @@ PRESS Q WHEN DONE";
 			"mobs" : 5,
 			"shop" : false,
 			"name" : "wave 1/3 - tokyo, japan",
-			"music" : FirstSong,
+			"music" : "third",
 			"grassiness" : 5,
 			"maxBladeHeight" : 0,
 			"r" : 0x9c,
 			"g" : 0x9c,
-			"b" : 0x9c
+			"b" : 0x9c,
+			"mobName" : "salaryman"
 		},
 		{
 			"spawn" : function (ticks) {
@@ -331,7 +347,7 @@ PRESS Q WHEN DONE";
 			"bgOffset" : 300,
 			"shop" : true,
 			"name" : "OUR STORES ARE ALL OVER JAPAN",
-			"music" : null,
+			"music" : "shop",
 			"mobs" : 0,
 			"grassiness" : 2,
 			"maxBladeHeight" : 0,
@@ -351,12 +367,13 @@ PRESS Q WHEN DONE";
 			"mobs" : 10,
 			"shop" : false,
 			"name" : "wave 2/3 - tokyo, japan",
-			"music" : FirstSong,
+			"music" : "first",
 			"grassiness" : 5,
 			"maxBladeHeight" : 0,
 			"r" : 0x9c,
 			"g" : 0x9c,
-			"b" : 0x9c
+			"b" : 0x9c,
+			"mobName" : "salaryman"
 		},
 		{
 			"spawn" : function (ticks) {
@@ -365,7 +382,7 @@ PRESS Q WHEN DONE";
 			"bgOffset" : 300,
 			"shop" : true,
 			"name" : "YOU HAVE COME FAR\nBUT DON'T GET COCKY YET",
-			"music" : null,
+			"music" : "shop",
 			"mobs" : 0,
 			"grassiness" : 2,
 			"maxBladeHeight" : 0,
@@ -377,7 +394,15 @@ PRESS Q WHEN DONE";
 			"spawn" : function (ticks) {
 				var freq = Std.int(Math.min(ticks/2.0, 950));
 				if ((ticks%(1000 - freq)) == 10) {
-					return "salaryman";
+					if (Math.random() < 0.5) {
+						return "salaryman";
+					} else {
+						if (Math.random() < 0.5) {
+							return "henro";
+						} else {
+							return "deer";
+						}
+					}
 				}
 				return null;
 			},
@@ -385,12 +410,13 @@ PRESS Q WHEN DONE";
 			"mobs" : 25,
 			"shop" : false,
 			"name" : "final wave!!!",
-			"music" : FirstSong,
+			"music" : "third",
 			"grassiness" : 5,
 			"maxBladeHeight" : 0,
 			"r" : 0x9c,
 			"g" : 0x9c,
-			"b" : 0x9c
+			"b" : 0x9c,
+			"mobName" : "salaryman"
 		}
 	];
 
@@ -480,7 +506,10 @@ PRESS Q WHEN DONE";
 	}
 
 	function restartGame() {
-//		channel = new FirstSong().play(0, 9999);
+		if (channel != null) {
+			channel.stop();
+		}
+		channel = new FirstSong().play(0, 9999);
 		over = false;
 		level = 0;
 		lanes = 3;
@@ -506,15 +535,35 @@ PRESS Q WHEN DONE";
 		mobsKilledOrPassed = 0;
 		levelComplete = false;
 		didVisitStore = false;
+		ticks = 0;
 	}
 
 	function nextLevel() {
-		makeRandomBackstory();
+		smokeParticles.reset();
+		particles.reset();
+		backstory = makeRandomBackstory();
 		didVisitStore = false;
 		levelComplete = false;
 		mobsKilledOrPassed = 0;
 		mobsSpawned = 0;
 		level++;
+
+		channel.stop();
+		if (levels[level].music == "first") {
+			channel = new FirstSong().play(0, 9999);
+		}
+		if (levels[level].music == "third") {
+			channel = new ThirdSong().play(0, 9999);
+		}
+		if (levels[level].music == "second") {
+			channel = new SecondSong().play(0, 9999);
+		}
+		if (levels[level].music == "shop") {
+			channel = new ShopSong().play(0, 9999);
+		}
+
+//		channel = music.play();
+//		channel = new music().play();
 		for (mob in mobs) {
 			ents.remove(mob);
 		}
@@ -526,6 +575,7 @@ PRESS Q WHEN DONE";
 		for (pet in pets) {
 			pet.health = 100;
 			pet.recall();
+			pet.fightingCounter = 0;
 		}
 		boy.xx = 0;
 
@@ -645,6 +695,7 @@ PRESS Q WHEN DONE";
 				return;
 			}
 
+			new BlipSound().play();
 			adopt(petName, 10);
 			money -= c;			
 			info("Bought " + petName);
@@ -751,6 +802,7 @@ PRESS Q WHEN DONE";
 		new HurtSound().play();
 		mob.damage(d);
 		if (mob.died()) {
+			smokeParticles.burst(mob.x + Math.random() * 32, mob.y + Math.random() * 32, 0, 100, 0.1, 1, 100, mob.y + 32, -0.01);
 
 			// Stop fighting dead enemy
 			for (p in pets) {
@@ -777,11 +829,12 @@ PRESS Q WHEN DONE";
 
 		pet.damage(Std.int(mob.attackStrength * 0.5 + mob.attackStrength * Math.random()));
 		if (pet.died()) {
+			pet.fightingCounter = 0;
 			info(pet.petType + (Math.random() < 0.5 ? " is gone!" : " died!"));
 			new DogDeadSound().play();
 		}
 
-		popup(mob.x, mob.y, txt);
+		popup(Std.int(Math.min(mob.x, 170.0)), mob.y, txt);
 //		pet.recall();
 	}
 
@@ -806,6 +859,7 @@ PRESS Q WHEN DONE";
 			if (ent.requestRemoval) {
 				removeThese.push(ent);
 				mobs.remove(ent);
+				pets.remove(ent);
 			}
 		}
 
@@ -842,10 +896,21 @@ PRESS Q WHEN DONE";
 	function tick() {
 		if (!over) boyDamage();
 
-		ticks++;
-		var spawnThis = levels[level].spawn(ticks);
-		if (spawnThis != null && levels[level].mobs > mobsSpawned) {
-			spawn(spawnThis);
+		for (pet in pets) {
+			if (pet.fightingCounter > 0) {
+				particles.burst(pet.x + 16, pet.y + 16, Math.random() * Math.PI * 2, 2, 0.1, 1.5, Std.int(10 * Math.random()), pet.y + 32);
+			}
+		}
+
+		ticks++;		
+
+		if (levels[level].mobName != null && mobs.length == 0) {
+			spawn(levels[level].mobName);
+		} else {
+			var spawnThis = levels[level].spawn(ticks);
+			if (spawnThis != null && levels[level].mobs > mobsSpawned) {
+				spawn(spawnThis);
+			}
 		}
 
 		for (ent in ents) {
@@ -928,6 +993,17 @@ PRESS Q WHEN DONE";
 			drawShop(buffer);
 		}
 
+		particles.tick(ground);
+		smokeParticles.tick(null);
+		particleBD.fillRect(particleBD.rect, 0x00000000);
+		smokeParticleBD.fillRect(particleBD.rect, 0x00000000);
+		particles.draw(particleBD);
+		smokeParticles.draw(smokeParticleBD);
+		particleBD.applyFilter(particleBD, particleBD.rect, new Point(0,0), new flash.filters.GlowFilter(0xffff0000, 1.0, 10, 10, 1.5, 2, false, false));
+		smokeParticleBD.applyFilter(smokeParticleBD, smokeParticleBD.rect, new Point(0,0), new flash.filters.BlurFilter(10, 10));
+		buffer.draw(particleBD);
+		buffer.draw(smokeParticleBD);
+
 		// Draw in correct order for depth
 		ents.sort(function (x:Entity, y:Entity) {
 			if (x.y == y.y) {
@@ -993,6 +1069,7 @@ PRESS Q WHEN DONE";
 			Popup.write(buffer, 0, 180, backstory, 0xffffff, false);			
 		}
 
+
 		var m = new Matrix();
 		m.scale(3, 3);
 		display.draw(buffer, m, null, null);
@@ -1001,6 +1078,8 @@ PRESS Q WHEN DONE";
 
 
 	public function new() {
+		particles = new Particles();
+		smokeParticles = new Particles();
 		backstory = makeRandomBackstory();
 
 		Blob.setSheet(sheet);
@@ -1015,8 +1094,8 @@ PRESS Q WHEN DONE";
 		Blob.defineAnimation("deer_walk", 4, 5, 5, 5);
 		restartGame();
 
-		particles = new Particles();
-		particles.setBitmap("pixel", new ParticlePNG(0,0));
+		smokeParticles.scale = 0.1;
+		smokeParticles.setBitmap("pixel", new SmokePNG(0,0));
 		b.Generators.generateOverlay(overlayBD);
 //		b.Generators.generateOverlay2(lightBD, 0xfff0f0f0, 0xfff0f0f0);
 
@@ -1073,9 +1152,9 @@ PRESS Q WHEN DONE";
 		// And you must go to tokyo
 
 		var ds = [
-			"to help them",
-			"to save them",
-			"to assist them",
+			"to help",
+			"to rescue",
+			"to assist",
 			"to put a stop to it",
 			"to take a photo",
 			"to laugh",

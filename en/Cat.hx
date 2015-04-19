@@ -7,6 +7,7 @@ class Cat extends Pet {
 		super();
 		fightDelay = 50;
 		healingSpeed = 0.005;
+		criticalAttackStrength = 100;
 		petType = "cat";
 		anim("cat_idle");
 	}
